@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Drawing;
 
 namespace CoinQuest
 {
@@ -21,20 +22,22 @@ namespace CoinQuest
         private HeroTilemap _heroMap;
         private MapType _mapType = MapType.Basic;
         private KeyboardState _priorKeyboardState;
-       
+        private YellowBirdSprite bird;
+        private SpriteFont skranji;
+
 
         public Game()
         {
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 1024;
-            _graphics.PreferredBackBufferHeight = 768;
+            _graphics.PreferredBackBufferWidth = 500;
+            _graphics.PreferredBackBufferHeight = 500;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            bird = new YellowBirdSprite(new Vector2(_graphics.PreferredBackBufferWidth * 0.4f, 0), Direction.Down);
 
             base.Initialize();
         }
@@ -48,6 +51,8 @@ namespace CoinQuest
             _basicMap = Content.Load<BasicTilemap>("BasicMapTest");
             _ooMap = Content.Load<OOTilemap>("MapTest");
             _heroMap = Content.Load<HeroTilemap>("HeroMapTest");
+            //skranji = Content.Load<SpriteFont>("skranji");
+            bird.LoadContent(Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -58,7 +63,8 @@ namespace CoinQuest
             if(_mapType == MapType.ObjectOriented) _ooMap.Update(gameTime);
             if(_mapType == MapType.Hero) _heroMap.Update(gameTime);
 
-            // TODO: Add your update logic here
+            bird.Update(gameTime);
+
             var keyboardState = Keyboard.GetState();
             if(keyboardState.IsKeyDown(Keys.Space) && _priorKeyboardState.IsKeyUp(Keys.Space))
             {
@@ -72,7 +78,7 @@ namespace CoinQuest
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
@@ -90,7 +96,7 @@ namespace CoinQuest
                     break;
             }
 
-            _spriteBatch.DrawString(_spriteFont, $"{_mapType} Tilemap", new Vector2(50, 50), Color.White);
+            bird.Draw(gameTime, _spriteBatch);
 
             _spriteBatch.End();
 

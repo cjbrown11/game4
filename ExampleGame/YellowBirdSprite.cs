@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using System.Windows.Forms;
+using Microsoft.Xna.Framework.Input;
 
 namespace CoinQuest
 {
@@ -35,6 +35,8 @@ namespace CoinQuest
         private bool flipped;
 
         private BoundingRectangle bounds;
+
+        private KeyboardState keyboardState;
 
         /// <summary>
         /// The direction of the bird
@@ -76,45 +78,19 @@ namespace CoinQuest
         /// <param name="gameTime">The game time</param>
         public void Update(GameTime gameTime)
         {
-            directionTimer += gameTime.ElapsedGameTime.TotalSeconds;
+            keyboardState = Keyboard.GetState();
 
-            if (directionTimer > 2.0)
+            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)) position += new Vector2(0, -1);
+            if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)) position += new Vector2(0, 1);
+            if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
             {
-                switch (Direction)
-                {
-                    case Direction.Up:
-                        Direction = Direction.Down;
-                        break;
-                    case Direction.Down:
-                        Direction = Direction.Right;
-                        flipped = false;
-                        break;
-                    case Direction.Right:
-                        Direction = Direction.Left;
-                        flipped = true;
-                        break;
-                    case Direction.Left:
-                        Direction = Direction.Up;
-                        break;
-                }
-                directionTimer -= 2.0;
+                position += new Vector2(-1, 0);
+                flipped = true;
             }
-
-            //Move the bird
-            switch (Direction)
+            if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
             {
-                case Direction.Up:
-                    position += new Vector2(0, -1) * 100 * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    break;
-                case Direction.Down:
-                    position += new Vector2(0, 1) * 100 * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    break;
-                case Direction.Left:
-                    position += new Vector2(-1, 0) * 100 * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    break;
-                case Direction.Right:
-                    position += new Vector2(1, 0) * 100 * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    break;
+                position += new Vector2(1, 0);
+                flipped = false;
             }
 
             bounds.X = position.X - 24;
